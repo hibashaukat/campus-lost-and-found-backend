@@ -10,12 +10,12 @@ const PORT = process.env.PORT || 5000;
 
 // 2. Middleware SECOND
 app.use(cors({
-  origin: [
+ origin: [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://localhost:5173',
-    'https://campus-lost-and-found-frontend-b1xq.vercel.app/ // Add your frontend link here later
-  ],
+    'https://campus-lost-and-found-frontend-b1xq.vercel.app' // <--- Note: No slash at the end
+],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
