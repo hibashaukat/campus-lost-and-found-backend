@@ -29,12 +29,16 @@ app.use(cors({
 
 app.use(express.json());
 
-// 2. Database Connection with Timeout handling
+// MongoDB connection - Isay server.js mein yahan paste karein
 mongoose.connect(process.env.MONGO_URI, {
-  serverSelectionTimeoutMS: 5000 // 5 seconds mein connect na ho toh error de
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 5000 // 5 seconds ke baad timeout ho jaye agar connect na ho
 })
 .then(() => console.log('Connected to MongoDB'))
-.catch((error) => console.error('Error connecting to MongoDB:', error));
+.catch((error) => {
+  console.error('Error connecting to MongoDB:', error.message);
+});
 
 // 3. Health Check Route
 app.get('/', (req, res) => {
