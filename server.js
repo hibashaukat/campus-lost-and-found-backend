@@ -14,7 +14,7 @@ app.use(cors({
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://localhost:5173',
-    'https://your-frontend-link.vercel.app' // Add your frontend link here later
+    'https://campus-lost-and-found-frontend-b1xq.vercel.app/ // Add your frontend link here later
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
