@@ -1,12 +1,14 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+  
+app.use(cors());
 const dotenv = require('dotenv');
 const fs = require('fs');
 const path = require('path');
 
 // Load environment variables
-dotenv.config({ path: path.join(__dirname, '..', '.env') });
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
