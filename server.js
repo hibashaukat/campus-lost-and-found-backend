@@ -2,24 +2,19 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-  
-app.use(cors());
-const dotenv = require('dotenv');
 const fs = require('fs');
 const path = require('path');
 
-// Load environment variables
-dotenv.config();
-
-const app = express();
+const app = express(); // 1. Create app FIRST
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// 2. Middleware SECOND
 app.use(cors({
   origin: [
-    'http://localhost:3000',  // React development server
-    'http://127.0.0.1:3000',  // Alternative localhost
-    'http://localhost:5173',  // Vite development server (if used)
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'http://localhost:5173',
+    'https://your-frontend-link.vercel.app' // Add your frontend link here later
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -27,24 +22,19 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Serve static files from the uploads directory
+// Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Ensure uploads directory exists for file storage
+// Ensure uploads directory exists
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
-  console.log('Created uploads directory');
 }
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
-.then(() => {
-  console.log('Connected to MongoDB');
-})
-.catch((error) => {
-  console.error('Error connecting to MongoDB:', error);
-});
+.then(() => console.log('Connected to MongoDB'))
+.catch((error) => console.error('Error connecting to MongoDB:', error));
 
 // Basic route
 app.get('/', (req, res) => {
@@ -55,6 +45,7 @@ app.get('/', (req, res) => {
 const authRoutes = require('./routes/auth');
 const itemRoutes = require('./routes/items');
 const commentRoutes = require('./routes/comments');
+
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/comments', commentRoutes);
@@ -63,3 +54,5 @@ app.use('/api/comments', commentRoutes);
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+module.exports = app; // Important for Vercel
