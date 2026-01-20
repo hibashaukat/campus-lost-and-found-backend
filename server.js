@@ -1,36 +1,55 @@
-// MongoDB connection - isay server.js mein replace karein
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const path = require('path');
+
+const app = express();
+
+// 1. CORS Setup
+app.use(cors({
+    origin: ["https://campus-lost-and-found-frontend-b1xq.vercel.app", "http://localhost:5173"],
+    credentials: true
+}));
+app.use(express.json());
+
+// 2. Database Connection (Crash-Proof Logic)
 const connectDB = async () => {
-  try {
-    if (mongoose.connection.readyState >= 1) return;
-    
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 10000, // 10 seconds wait karega
-    });
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('MongoDB Connection Error:', error.message);
-  }
+    try {
+        if (mongoose.connection.readyState >= 1) return;
+        
+        console.log("Attempting to connect to MongoDB...");
+        await mongoose.connect(process.env.MONGO_URI, {
+            serverSelectionTimeoutMS: 5000,
+        });
+        console.log("MongoDB Connected Successfully");
+    } catch (err) {
+        console.error("MongoDB Connection Error:", err.message);
+        // Server ko crash hone se bachaane ke liye process exit nahi karenge
+    }
 };
 
+// Start connection but don't block the app
 connectDB();
 
-// Status route (isay bhi update karein taake error nazar aaye)
-app.get('/', async (req, res) => {
-  const dbState = mongoose.connection.readyState;
-  const states = {
-    0: "Disconnected",
-    1: "Connected",
-    2: "Connecting",
-    3: "Disconnecting"
-  };
-
-  res.json({ 
-    status: 'Online',
-    dbStatus: states[dbState],
-    message: 'Campus Lost & Found API is running!',
-    // Agar disconnect hai toh ye line debug mein help karegi
-    timestamp: new Date().toISOString()
-  });
+// 3. Health Check Route
+app.get('/', (req, res) => {
+    const status = mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
+    res.json({
+        status: "Online",
+        database: status,
+        message: "API is alive!"
+    });
 });
+
+// 4. Routes
+// Make sure these paths are correct according to your folders
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/items', require('./routes/items'));
+app.use('/api/comments', require('./routes/comments'));
+
+// 5. Port Listening
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server on ${PORT}`));
+
+module.exports = app;
