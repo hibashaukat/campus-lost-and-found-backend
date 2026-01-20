@@ -1,0 +1,35 @@
+{
+  "name": "campus-lost-and-found",
+  "version": "1.0.0",
+  "description": "The Campus Lost & Found System is a full-stack web application developed as a Web Engineering course project.\r It helps students report lost or found items within a university campus, while admins manage and verify reports.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hibashaukat/campus-lost-and-found.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/hibashaukat/campus-lost-and-found/issues"
+  },
+  "homepage": "https://github.com/hibashaukat/campus-lost-and-found#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.1.4",
+    "multer": "^2.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
