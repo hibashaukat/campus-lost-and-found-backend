@@ -1,55 +1,55 @@
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); // Yeh line hona zaroori hai
 const cors = require('cors');
 const path = require('path');
 
-const app = express();
+const app = express(); // Yeh line bhi upar honi chahiye
 
-// 1. CORS Setup
+// 1. Middleware
 app.use(cors({
     origin: ["https://campus-lost-and-found-frontend-b1xq.vercel.app", "http://localhost:5173"],
     credentials: true
 }));
 app.use(express.json());
 
-// 2. Database Connection (Crash-Proof Logic)
+// 2. Database Connection Logic
 const connectDB = async () => {
     try {
         if (mongoose.connection.readyState >= 1) return;
         
-        console.log("Attempting to connect to MongoDB...");
-        await mongoose.connect(process.env.MONGO_URI, {
-            serverSelectionTimeoutMS: 5000,
-        });
+        await mongoose.connect(process.env.MONGO_URI);
         console.log("MongoDB Connected Successfully");
     } catch (err) {
         console.error("MongoDB Connection Error:", err.message);
-        // Server ko crash hone se bachaane ke liye process exit nahi karenge
     }
 };
 
-// Start connection but don't block the app
+// Database connect karein
 connectDB();
 
-// 3. Health Check Route
+// 3. Routes
 app.get('/', (req, res) => {
-    const status = mongoose.connection.readyState === 1 ? "Connected" : "Disconnected";
     res.json({
         status: "Online",
-        database: status,
-        message: "API is alive!"
+        database: mongoose.connection.readyState === 1 ? "Connected" : "Disconnected",
+        message: "API is working perfectly!"
     });
 });
 
-// 4. Routes
-// Make sure these paths are correct according to your folders
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/items', require('./routes/items'));
-app.use('/api/comments', require('./routes/comments'));
+// Important: Check karein ke routes files exist karti hain
+try {
+    app.use('/api/auth', require('./routes/auth'));
+    app.use('/api/items', require('./routes/items'));
+    app.use('/api/comments', require('./routes/comments'));
+} catch (routeError) {
+    console.error("Route Loading Error:", routeError.message);
+}
 
-// 5. Port Listening
+// 4. Port
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server on ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
 module.exports = app;
